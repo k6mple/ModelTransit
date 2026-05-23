@@ -40,7 +40,7 @@ export default function ChatPage() {
 
   /* ---------- derived ---------- */
   const displayMessages = messages.filter((m) => m.role !== "system")
-  const isEmpty = displayMessages.length === 0 && input.length === 0
+  const isEmpty = displayMessages.length === 0
 
   /* ---------- auto-scroll ---------- */
   const scrollToBottom = useCallback(() => {
@@ -171,7 +171,7 @@ export default function ChatPage() {
                   Jane returns!
                 </h1>
                 <p className="text-sm text-zinc-500 font-mono">
-                  Your AI copilot · dark mode forever
+                  Your AI copilot
                 </p>
               </div>
 
