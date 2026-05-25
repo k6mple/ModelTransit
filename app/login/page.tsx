@@ -35,6 +35,7 @@ export default function LoginPage() {
                   value={mail}
                   setInput={setMail}
                   placeholder="mail@example.com"
+                  onChange={(e) => {setMail(e.target.value)}}
                 />
               </div>
               <div className="grid gap-2">

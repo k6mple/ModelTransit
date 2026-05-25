@@ -8,6 +8,7 @@ import { SelectBox } from "@/components/ui/SelectBox"
 import { NavigationMenuDemo } from "@/components/ui/NavigationMenu"
 import { PanelLeftOpen } from "lucide-react"
 import { v4 as uuidv4 } from 'uuid';
+import Link from "next/link"
 
 /* ── types ────────────────────────────────────────── */
 type Role = "system" | "user" | "assistant"
@@ -192,9 +193,9 @@ export default function ChatPage() {
             <div className="flex-1 flex items-center justify-between">
               <NavigationMenuDemo />
 
-              <span className="text-xs text-zinc-600 font-mono tracking-wide">
-                AI Transfer
-              </span>
+              <Link href="/login">
+                <button className="bg-white text-black rounded-full w-20 h-10 font-semibold">Sign in</button>
+              </Link>
             </div>
           </header>
 

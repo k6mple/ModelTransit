@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -8,7 +9,7 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   type: string
 }
 
-export function Input({ value, setInput: _setInput, type, className, onChange, ...rest }: Props) {
+export function Input({ value, setInput, type, className, onChange, ...rest }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {

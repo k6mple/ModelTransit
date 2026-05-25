@@ -113,3 +113,17 @@ export async function GET(req: Request) {
     return NextResponse.json(error)
   }
 }
+
+export async function DELETE(req: Request){
+  const body = await req.json()
+  try{
+    await prisma.history.delete({
+      where: {
+        id: body.chatId
+      }
+    })
+    console.log("Succeeding in deleting one history item, id: ", body.chatId)
+  }catch(error){
+    console.log(`Failed to delete history item,id: ${body.chatId}`, error)
+  }
+}
