@@ -11,3 +11,18 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  chatId    String
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model History {
+  id        String   @unique
+  title     String
+  date      String
+  createdAt DateTime @default(now())
+}

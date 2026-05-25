@@ -7,6 +7,7 @@ import { InputInline } from "@/components/ui/InputInline"
 import { SelectBox } from "@/components/ui/SelectBox"
 import { NavigationMenuDemo } from "@/components/ui/NavigationMenu"
 import { PanelLeftOpen } from "lucide-react"
+import { v4 as uuidv4 } from 'uuid';
 
 /* ── types ────────────────────────────────────────── */
 type Role = "system" | "user" | "assistant"
@@ -18,7 +19,7 @@ const SYSTEM_PROMPT: Message = {
 }
 
 /* ── helpers ──────────────────────────────────────── */
-const newId = () => crypto.randomUUID()
+//
 const fmtDate = (d: Date) =>
   d.toLocaleDateString("zh-CN", { month: "short", day: "numeric" })
 
@@ -46,11 +47,35 @@ export default function ChatPage() {
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [])
-
+  
+  //always scroll to bottom following messages
   useEffect(() => {
     scrollToBottom()
   }, [messages, scrollToBottom])
 
+  //fetch history chat on mounted
+  useEffect(() => {
+    async function fetchHistory(){
+      const getHistory = await fetch("/api/chat", { method:"GET" })
+      const data = await getHistory.json()
+      if(!data) return
+      setHistory(data)
+    }
+    fetchHistory()
+  }, [])
+
+  //fetch messages when active chat id changes
+  useEffect(() => {
+    async function fetchMessages(){
+      const getMessages = await fetch(`/api/chat?chatId=${activeChatId}`, { 
+        method:"GET"
+      })
+      const data = await getMessages.json()
+      if(!data) return
+      setMessages(data)
+    }
+    fetchMessages() 
+  },[activeChatId])
   /* ---------- new chat ---------- */
   const handleNewChat = useCallback(() => {
     setMessages([SYSTEM_PROMPT])
@@ -68,15 +93,23 @@ export default function ChatPage() {
 
   /* ---------- send message ---------- */
   async function sendMessage() {
+    let isNewChat = false
+    let chatId = activeChatId
     if (!input.trim() || streaming) return
 
-    // start a new history entry if this is a fresh chat
+    // start a new history entry if this is a new chat
     if (messages.length <= 1) {
-      const chatId = newId()
-      const title = input.slice(0, 40) + (input.length > 40 ? "…" : "")
+      isNewChat = true
+      chatId = uuidv4()
       setActiveChatId(chatId)
+      const title = input.slice(0, 40) + (input.length > 40 ? "…" : "")
+      const newHistoryItem = {
+        id: chatId,
+        title: title,
+        date: fmtDate(new Date())
+      }
       setHistory((prev) => [
-        { id: chatId, title, date: fmtDate(new Date()) },
+        newHistoryItem,
         ...prev,
       ])
     }
@@ -95,8 +128,11 @@ export default function ChatPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          isNewChat: isNewChat,
+          chatId: chatId,
           messages: newMessages,
           model: selectVal,
+          date: fmtDate(new Date())
         }),
         signal: controller.signal,
       })
@@ -140,7 +176,7 @@ export default function ChatPage() {
         <AppSidebar
           history={history}
           activeId={activeChatId}
-          onSelect={() => {}}
+          onSelect={(id) => {setActiveChatId(id)}}
           onNew={handleNewChat}
           onDelete={handleDelete}
         />
