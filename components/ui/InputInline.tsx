@@ -21,7 +21,7 @@ export function InputInline({
   return (
     <Field orientation="horizontal">
       <Input type="search" placeholder="Let's talk about something..."
-        className="rounded-full h-11 min-w-[400px]"
+        className="rounded-full h-11 flex-1"
         value={input}
         setInput={setInput}
         onChange={(e) => setInput(e.target.value)}

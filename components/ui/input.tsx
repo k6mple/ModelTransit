@@ -7,6 +7,7 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   value: string
   setInput: React.Dispatch<React.SetStateAction<string>>
   type: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export function Input({ value, setInput, type, className, onChange, ...rest }: Props) {
@@ -19,7 +20,7 @@ export function Input({ value, setInput, type, className, onChange, ...rest }: P
   return (
     <input
       ref={inputRef}
-      value={value}
+      value={value} 
       type={type}
       data-slot="input"
       className={cn(

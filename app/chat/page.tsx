@@ -204,15 +204,15 @@ export default function ChatPage() {
             /* ─── empty-state: everything centered ─── */
             <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4">
               <div className="flex flex-col items-center gap-2">
-                <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                  Jane returns!
+                <h1 className="text-3xl font-semibold text-white">
+                  Ready when you are
                 </h1>
                 <p className="text-sm text-zinc-500 font-mono">
                   Your AI copilot
                 </p>
               </div>
 
-              <div className="w-full max-w-xl">
+              <div className="w-full max-w-3xl">
                 <InputInline
                   input={input}
                   setInput={setInput}
@@ -272,7 +272,7 @@ export default function ChatPage() {
 
               {/* sticky bottom input area */}
               <div className="sticky bottom-0 z-10 border-t border-border/30 bg-gradient-to-t from-background via-background/98 to-background/60 backdrop-blur-md px-4 py-4">
-                <div className="mx-auto max-w-3xl flex items-end gap-3">
+                <div className="mx-auto max-w-5xl flex items-end gap-3">
                   <div className="flex-1">
                     <InputInline
                       input={input}
