@@ -14,7 +14,6 @@ datasource db {
 
 model Message {
   id        Int      @id @default(autoincrement())
-  userId    Int      @unique
   chatId    String
   role      String
   content   String
@@ -23,7 +22,6 @@ model Message {
 
 model History {
   id        String   @unique
-  userId    Int      @unique
   title     String
   date      String
   createdAt DateTime @default(now())

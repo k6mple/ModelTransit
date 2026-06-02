@@ -95,7 +95,7 @@ export async function GET(req: Request) {
       return NextResponse.json(messages)
     } catch (error) {
       console.log("Failed to fetch history messages", error)
-      return NextResponse.json(error)
+      return NextResponse.json([], { status: 500 })
     }
   }
 
@@ -110,7 +110,7 @@ export async function GET(req: Request) {
     return NextResponse.json(history)
   } catch (error) {
     console.log("Failed to fetch the history", error)
-    return NextResponse.json(error)
+    return NextResponse.json([], { status: 500 })
   }
 }
 

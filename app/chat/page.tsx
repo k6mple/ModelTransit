@@ -59,7 +59,7 @@ export default function ChatPage() {
     async function fetchHistory(){
       const getHistory = await fetch("/api/chat", { method:"GET" })
       const data = await getHistory.json()
-      if(!data) return
+      if(!Array.isArray(data)) return
       setHistory(data)
     }
     fetchHistory()
@@ -68,14 +68,14 @@ export default function ChatPage() {
   //fetch messages when active chat id changes
   useEffect(() => {
     async function fetchMessages(){
-      const getMessages = await fetch(`/api/chat?chatId=${activeChatId}`, { 
+      const getMessages = await fetch(`/api/chat?chatId=${activeChatId}`, {
         method:"GET"
       })
       const data = await getMessages.json()
-      if(!data) return
+      if(!Array.isArray(data)) return
       setMessages(data)
     }
-    fetchMessages() 
+    fetchMessages()
   },[activeChatId])
   /* ---------- new chat ---------- */
   const handleNewChat = useCallback(() => {
