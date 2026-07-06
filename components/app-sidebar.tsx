@@ -27,6 +27,7 @@ type AppSidebarProps = {
   onSelect: (id: string) => void
   onNew: () => void
   onDelete: (id: string) => void
+  children?: React.ReactNode
 }
 
 export function AppSidebar({
@@ -35,6 +36,7 @@ export function AppSidebar({
   onSelect,
   onNew,
   onDelete,
+  children,
 }: AppSidebarProps) {
   return (
     <Sidebar
@@ -105,6 +107,8 @@ export function AppSidebar({
           )}
         </SidebarGroup>
       </SidebarContent>
+
+      {children}
 
       <SidebarFooter className="px-3 py-3 border-t border-border/40">
         <p className="text-[10px] text-zinc-600 text-center font-mono">

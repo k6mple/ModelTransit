@@ -1,5 +1,6 @@
 import OpenAI from "openai"
 import { prisma } from "@/lib/prisma"
+import { retrieveContext } from "@/lib/rag"
 import { NextResponse } from "next/server";
 
 const openai = new OpenAI({
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
       })
       console.log("Succeed in creating history: ", body.chatId)
     }
-    
+
 
     await prisma.message.create({
       data: {
@@ -35,9 +36,31 @@ export async function POST(req: Request) {
     })
     console.log("Succeeding in creating ", userMessage.role, "message in history: ", body.chatId)
 
+    // RAG: retrieve relevant context
+    let messages = body.messages
+    if (body.ragEnabled && userMessage?.content) {
+      const context = retrieveContext(userMessage.content)
+      if (context) {
+        const ragPrompt = `你是一个基于知识库的问答助手。请仅根据以下检索到的文档内容回答问题。如果文档中没有相关信息，请如实说"文档中未找到相关信息"。
+
+检索到的文档内容：
+${context}`
+
+        // replace or augment the system message
+        const sysIdx = messages.findIndex((m: { role: string }) => m.role === "system")
+        if (sysIdx >= 0) {
+          messages = messages.map((m: { role: string; content: string }, i: number) =>
+            i === sysIdx ? { ...m, content: m.content + "\n\n" + ragPrompt } : m
+          )
+        } else {
+          messages = [{ role: "system", content: ragPrompt }, ...messages]
+        }
+      }
+    }
+
     //Build output stream
     const stream = await openai.chat.completions.create({
-      messages: body.messages,
+      messages: messages,
       model: body.model,
       stream: true
     })

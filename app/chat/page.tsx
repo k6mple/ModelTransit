@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar, type ChatHistoryItem } from "@/components/app-sidebar"
+import { RagPanel } from "@/components/rag-panel"
 import { InputInline } from "@/components/ui/InputInline"
 import { SelectBox } from "@/components/ui/SelectBox"
 import { NavigationMenuDemo } from "@/components/ui/NavigationMenu"
@@ -16,7 +17,7 @@ type Message = { role: Role; content: string }
 
 const SYSTEM_PROMPT: Message = {
   role: "system",
-  content: "You are a helpful assistant",
+  content: "你是deepseek-v4-pro模型, 是一个高效的问答助手",
 }
 
 /* ── helpers ──────────────────────────────────────── */
@@ -35,6 +36,9 @@ export default function ChatPage() {
   // sidebar / history
   const [history, setHistory] = useState<ChatHistoryItem[]>([])
   const [activeChatId, setActiveChatId] = useState<string | null>(null)
+
+  // RAG
+  const [ragEnabled, setRagEnabled] = useState(false)
 
   /* ---------- refs ---------- */
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -102,7 +106,6 @@ export default function ChatPage() {
     if (messages.length <= 1) {
       isNewChat = true
       chatId = uuidv4()
-      setActiveChatId(chatId)
       const title = input.slice(0, 40) + (input.length > 40 ? "…" : "")
       const newHistoryItem = {
         id: chatId,
@@ -133,7 +136,8 @@ export default function ChatPage() {
           chatId: chatId,
           messages: newMessages,
           model: selectVal,
-          date: fmtDate(new Date())
+          date: fmtDate(new Date()),
+          ragEnabled: ragEnabled,
         }),
         signal: controller.signal,
       })
@@ -153,6 +157,7 @@ export default function ChatPage() {
           ...newMessages,
           { role: "assistant", content: fullText },
         ])
+        setActiveChatId(chatId);
       }
     } catch (err: unknown) {
       if (err instanceof Error && err.name === "AbortError") return
@@ -180,7 +185,9 @@ export default function ChatPage() {
           onSelect={(id) => {setActiveChatId(id)}}
           onNew={handleNewChat}
           onDelete={handleDelete}
-        />
+        >
+          <RagPanel ragEnabled={ragEnabled} onRagToggle={setRagEnabled} />
+        </AppSidebar>
 
         {/* ── Main ─────────────────────────────────── */}
         <main className="flex flex-1 flex-col min-w-0 h-screen">
