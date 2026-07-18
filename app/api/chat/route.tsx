@@ -1,7 +1,9 @@
 import OpenAI from "openai"
 import { prisma } from "@/lib/prisma"
 import { retrieveContext } from "@/lib/rag"
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/auth"
 
 const openai = new OpenAI({
   baseURL: 'https://api.deepseek.com',
@@ -10,17 +12,19 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
   try {
+    const session = await getServerSession(authOptions)
     const body = await req.json()
     const userMessage = body.messages.at(-1)
     console.log(body)
 
-    if (body.isNewChat) {
+    if (body.isNewChat && session?.user?.id) {
       const title = userMessage.content.slice(0, 40) + (userMessage.content.length > 40 ? "…" : "")
       await prisma.history.create({
         data: {
           id: body.chatId,
           title: title,
-          date: body.date
+          date: body.date,
+          userId: session.user.id,
         }
       })
       console.log("Succeed in creating history: ", body.chatId)
@@ -34,7 +38,7 @@ export async function POST(req: Request) {
         content: userMessage.content,
       }
     })
-    console.log("Succeeding in creating ", userMessage.role, "message in history: ", body.chatId)
+    console.log("Succeeding in creating", userMessage.role, "message in history: ", body.chatId)
 
     // RAG: retrieve relevant context
     let messages = body.messages
@@ -101,6 +105,11 @@ ${context}`
 }
 
 export async function GET(req: Request) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json([])
+  }
+  const userId = session.user.id
   const { searchParams } = new URL(req.url)
   const chatId = searchParams.get("chatId")
   if (chatId) {
@@ -114,7 +123,7 @@ export async function GET(req: Request) {
         }
       })
       console.log("Succeed in fetching corresponding messages")
-      console.log(messages) 
+      console.log(messages)
       return NextResponse.json(messages)
     } catch (error) {
       console.log("Failed to fetch history messages", error)
@@ -124,6 +133,9 @@ export async function GET(req: Request) {
 
   try {
     const history = await prisma.history.findMany({
+      where: {
+        userId: userId
+      },
       orderBy: {
         createdAt: "desc"
       }
@@ -138,11 +150,16 @@ export async function GET(req: Request) {
 }
 
 export async function DELETE(req: Request){
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.id) {
+    return NextResponse.json({ code: 0, message: "Unauthorized" }, { status: 401 })
+  }
   const body = await req.json()
   try{
-    await prisma.history.delete({
+    await prisma.history.deleteMany({
       where: {
-        id: body.chatId
+        id: body.chatId,
+        userId: session.user.id
       }
     })
     console.log("Succeeding in deleting one history item, id: ", body.chatId)

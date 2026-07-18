@@ -5,14 +5,13 @@ import { cn } from "@/lib/utils"
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   value: string
-  setInput: React.Dispatch<React.SetStateAction<string>>
+  //setInput: React.Dispatch<React.SetStateAction<string>>
   type: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-export function Input({ value, setInput, type, className, onChange, ...rest }: Props) {
+export function Input({ value, type, className, onChange, ...rest }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null)
-
   React.useEffect(() => {
     inputRef.current?.focus()
   }, [])

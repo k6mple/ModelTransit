@@ -1,6 +1,6 @@
 "use client"
 
-import { MessageSquarePlus, Trash2, ChevronRight } from "lucide-react"
+import { MessageSquarePlus, X, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Sidebar,
@@ -96,10 +96,10 @@ export function AppSidebar({
                   </SidebarMenuButton>
                   <SidebarMenuAction
                     onClick={() => onDelete(item.id)}
-                    className="opacity-0 group-hover/item:opacity-100 transition-opacity"
+                    showOnHover
                     title="Delete chat"
                   >
-                    <Trash2 className="size-3.5 text-zinc-500 hover:text-red-400" />
+                    <X className="size-3.5 text-zinc-500 hover:text-red-400" />
                   </SidebarMenuAction>
                 </SidebarMenuItem>
               ))}

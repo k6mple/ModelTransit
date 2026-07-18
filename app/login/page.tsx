@@ -51,21 +51,18 @@ export default function LoginPage() {
     setError("")
 
     try {
-      const result = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: mail, password }),
+      const result = await signIn("credentials", {
+        email: mail,
+        password,
+        redirect: false,
       })
 
-      const data = await result.json()
-
-      if (data.code !== 1) {
-        setError(data.message || "Wrong account or password")
+      if (result?.error) {
+        setError("Wrong account or password")
         return
       }
 
-      localStorage.setItem("token", data.token)
-      router.push("/")
+      router.push("/chat")
       router.refresh()
     } catch {
       setError("Network error, please try again")
@@ -117,7 +114,7 @@ export default function LoginPage() {
                 id="email"
                 type="email"
                 value={mail}
-                setInput={setMail}
+                //setInput={setMail}
                 placeholder="mail@example.com"
                 onChange={(e) => setMail(e.target.value)}
                 autoComplete="email"
@@ -137,7 +134,7 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 value={password}
-                setInput={setPassword}
+                //setInput={setPassword}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
               />

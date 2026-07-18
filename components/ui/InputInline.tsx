@@ -23,7 +23,7 @@ export function InputInline({
       <Input type="search" placeholder="Let's talk about something..."
         className="rounded-full h-11 flex-1"
         value={input}
-        setInput={setInput}
+        //setInput={setInput}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !e.nativeEvent.isComposing) {

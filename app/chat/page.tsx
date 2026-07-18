@@ -9,6 +9,7 @@ import { SelectBox } from "@/components/ui/SelectBox"
 import { NavigationMenuDemo } from "@/components/ui/NavigationMenu"
 import { PanelLeftOpen } from "lucide-react"
 import { v4 as uuidv4 } from 'uuid';
+import { useSession, signOut } from "next-auth/react"
 import Link from "next/link"
 
 /* ── types ────────────────────────────────────────── */
@@ -32,6 +33,9 @@ export default function ChatPage() {
   const [selectVal, setSelectVal] = useState("")
   const [messages, setMessages] = useState<Message[]>([SYSTEM_PROMPT])
   const [streaming, setStreaming] = useState(false)
+
+  // session
+  const { data: session } = useSession()
 
   // sidebar / history
   const [history, setHistory] = useState<ChatHistoryItem[]>([])
@@ -200,9 +204,18 @@ export default function ChatPage() {
             <div className="flex-1 flex items-center justify-between">
               <NavigationMenuDemo />
 
-              <Link href="/login">
-                <button className="bg-white text-black rounded-full w-20 h-10 font-semibold">Sign in</button>
-              </Link>
+              {session ? (
+                <button
+                  onClick={() => signOut()}
+                  className="bg-white text-black rounded-full px-4 h-10 font-semibold"
+                >
+                  Hi {session.user?.name}
+                </button>
+              ) : (
+                <Link href="/login">
+                  <button className="bg-white text-black rounded-full w-20 h-10 font-semibold">Sign in</button>
+                </Link>
+              )}
             </div>
           </header>
 

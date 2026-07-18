@@ -18,7 +18,7 @@ export function NavigationMenuDemo() {
           </NavigationMenuLink>
         </NavigationMenuItem>
         <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-          <Link href="https://github.com/k6mple?tab=repositories">Github</Link>
+          <Link href="https://github.com/k6mple/ModelTransit">Github</Link>
         </NavigationMenuLink>
       </NavigationMenuList>
 

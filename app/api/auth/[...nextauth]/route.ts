@@ -1,1 +1,1 @@
-export { default as GET, default as POST } from "@/app/auth"
+export { GET, POST } from "@/app/auth"
